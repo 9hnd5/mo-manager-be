@@ -1,0 +1,40 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type TransactionItem {
+  id: Int!
+  amount: Int!
+  account: String!
+  category: String!
+  type: String!
+}
+
+type Transaction {
+  id: Int!
+  date: Date!
+  income: Int!
+  expense: Int!
+  createdById: Int!
+  transactionItems: [TransactionItem]!
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+type Query {
+  transactions(createdById: Int = 0): [Transaction!]!
+}
+
+type Mutation {
+  createTransaction(input: CreateTransactionInput!): Transaction!
+}
+
+input CreateTransactionInput {
+  date: Date!
+  amount: Int!
+  type: String!
+  category: String!
+  account: String!
+  note: String
+}
