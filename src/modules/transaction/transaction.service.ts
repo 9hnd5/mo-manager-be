@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TransactionItem } from 'src/entities/transaction-item.entity';
+import dayjs from 'dayjs';
 import { Transaction } from 'src/entities/transaction.entity';
-import { Repository } from 'typeorm';
-import { CreateTransactionInput } from './dto/create-transaction.input';
+import { Between, Repository } from 'typeorm';
 import { FindTransactionsArgs } from './dto/find-transactions.args';
 
 @Injectable()
@@ -13,60 +12,18 @@ export class TransactionService {
   ) {}
 
   find(args: FindTransactionsArgs) {
-    return this.transRepo.find();
-  }
-
-  async findTransItems(id: number) {
-    const transaction = await this.transRepo.findOne({
-      where: { id },
-      relations: {
-        transactionItems: true,
+    const { createdById, date } = args;
+    const start = dayjs(date).startOf('month');
+    const end = dayjs(date).endOf('month');
+    return this.transRepo.find({
+      where: {
+        createdById,
+        date: Between(
+          new Date(start.format('YYYY-MM-DD')),
+          new Date(end.format('YYYY-MM-DD')),
+        ),
       },
+      order: { date: 'DESC' },
     });
-    return transaction.transactionItems;
-  }
-
-  async create(input: CreateTransactionInput) {
-    console.log(input);
-    const { date, amount, account, type, category, note } = input;
-    const existTrans = await this.transRepo.findOne({
-      where: { date },
-      relations: {
-        transactionItems: true,
-      },
-    });
-
-    if (!existTrans) {
-      const newTrans = this.transRepo.create({
-        date: date,
-        income: type === 'income' ? amount : 0,
-        expense: type === 'expense' ? amount : 0,
-        createdById: 1,
-      });
-
-      const newTransItem = new TransactionItem();
-      newTransItem.account = account;
-      newTransItem.amount = amount;
-      newTransItem.category = category;
-      newTransItem.type = type;
-      newTransItem.note = note;
-
-      newTrans.transactionItems = [newTransItem];
-      return this.transRepo.save(newTrans);
-    }
-
-    if (type === 'income') existTrans.income += amount;
-
-    if (type === 'expense') existTrans.expense += amount;
-
-    const newTransItem = new TransactionItem();
-    newTransItem.account = account;
-    newTransItem.amount = amount;
-    newTransItem.category = category;
-    newTransItem.type = type;
-    newTransItem.note = note;
-
-    existTrans.transactionItems.push(newTransItem);
-    return this.transRepo.save(existTrans);
   }
 }

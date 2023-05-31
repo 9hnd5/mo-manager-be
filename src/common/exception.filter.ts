@@ -6,7 +6,6 @@ import { GraphQLError } from 'graphql';
 export class ExceptionFilter implements GqlExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     if (exception instanceof HttpException) {
-      console.log(exception.getResponse());
       const newException = new GraphQLError(exception.message, {
         extensions: {
           code: exception.getStatus(),

@@ -1,10 +1,7 @@
 import { Field, ArgsType, Int } from '@nestjs/graphql';
 
 @ArgsType()
-export class FindTransactionsArgs {
+export class FindAccountsArgs {
   @Field(() => Int, { defaultValue: 0, nullable: true })
   createdById?: number;
-
-  @Field(() => Date, { nullable: true })
-  date?: Date;
 }

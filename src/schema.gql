@@ -2,14 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type TransactionItem {
-  id: Int!
-  amount: Int!
-  account: String!
-  category: String!
-  type: String!
-}
-
 type Transaction {
   id: Int!
   date: Date!
@@ -19,22 +11,86 @@ type Transaction {
   transactionItems: [TransactionItem]!
 }
 
+type Category {
+  id: Int!
+  name: String!
+  createdById: Int!
+}
+
+type Account {
+  id: Int!
+  name: String!
+  createdById: Int!
+}
+
+type TransactionItem {
+  id: Int!
+  amount: Int!
+  account: Account!
+  category: Category!
+  type: String!
+  transactionId: Int!
+  note: String!
+}
+
+type FindFeeReportRes {
+  totalIncome: Int!
+  totalExpense: Int!
+  income: [Data!]!
+  expense: [Data!]!
+}
+
+type Data {
+  category: Category!
+  amount: Int!
+  percent: Float!
+}
+
 """Date custom scalar type"""
 scalar Date
 
 type Query {
-  transactions(createdById: Int = 0): [Transaction!]!
+  transactions(createdById: Int = 0, date: Date): [Transaction!]!
+  categories(createdById: Int = 0): [Category!]!
+  accounts(createdById: Int = 0): [Account!]!
+  feeReport(date: Date): FindFeeReportRes!
 }
 
 type Mutation {
-  createTransaction(input: CreateTransactionInput!): Transaction!
+  deteleTransactionItem(id: Int!): TransactionItem!
+  updateTransactionItem(input: UpdateTransactionItemInput!): TransactionItem!
+  createTransactionItem(input: CreateTransactionItemInput!): TransactionItem!
+  createCategory(input: CreateCategoryInput!): Category!
+  deleteCategory(id: Int!): Category!
+  createAccount(input: CreateAccountInput!): Account!
+  deleteAccount(id: Int!): Account!
 }
 
-input CreateTransactionInput {
+input UpdateTransactionItemInput {
   date: Date!
   amount: Int!
   type: String!
-  category: String!
-  account: String!
+  categoryId: Int!
+  accountId: Int!
   note: String
+  id: Int!
+}
+
+input CreateTransactionItemInput {
+  date: Date!
+  amount: Int!
+  type: String!
+  categoryId: Int!
+  accountId: Int!
+  note: String
+}
+
+input CreateCategoryInput {
+  name: String!
+  createdById: Float!
+}
+
+input CreateAccountInput {
+  name: String!
+  createdById: Float!
 }

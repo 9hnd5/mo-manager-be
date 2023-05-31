@@ -7,15 +7,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Transaction } from './transaction.entity';
+import { Category } from './category.entity';
+import { Account } from './account.entity';
 
 export enum TransItemType {
   income = 'income',
   expense = 'expense',
-}
-
-export enum TransItemAccount {
-  bank = 'bank',
-  credit = 'credit',
 }
 
 @ObjectType()
@@ -29,26 +26,30 @@ export class TransactionItem {
   @Column()
   amount: number;
 
-  @Field()
-  @Column({ type: 'enum', enum: TransItemAccount })
-  account: TransItemAccount;
+  @Field((type) => Account)
+  @Column({ type: 'json' })
+  account: Account;
 
-  @Field()
-  @Column()
-  category: string;
+  @Field((type) => Category)
+  @Column({ type: 'json' })
+  category: Category;
 
   @Field()
   @Column({ type: 'enum', enum: TransItemType })
   type: TransItemType;
 
-  @JoinColumn()
+  @Field(() => Int)
+  @Column()
   transactionId: number;
 
   @ManyToOne(() => Transaction, (item) => item.transactionItems, {
     onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
   })
+  @JoinColumn({ name: 'transactionId' })
   transaction: Transaction;
 
+  @Field()
   @Column({ nullable: true })
   note?: string;
 }

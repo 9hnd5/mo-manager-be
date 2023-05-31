@@ -7,7 +7,6 @@ export class DateScalar implements CustomScalar<string, Date> {
   description = 'Date custom scalar type';
 
   parseValue(value: number): Date {
-    console.log('value', value);
     return new Date(value); // value from the client
   }
 
