@@ -12,16 +12,13 @@ export class TransactionService {
   ) {}
 
   find(args: FindTransactionsArgs) {
-    const { createdById, date } = args;
-    const start = dayjs(date).startOf('month');
-    const end = dayjs(date).endOf('month');
+    const { createdById, fromDate, toDate } = args;
+    const start = dayjs(fromDate).format('YYYY-MM-DD');
+    const end = dayjs(toDate).format('YYYY-MM-DD');
     return this.transRepo.find({
       where: {
         createdById,
-        date: Between(
-          new Date(start.format('YYYY-MM-DD')),
-          new Date(end.format('YYYY-MM-DD')),
-        ),
+        date: Between(new Date(start), new Date(end)),
       },
       order: { date: 'DESC' },
     });

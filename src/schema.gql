@@ -50,7 +50,7 @@ type Data {
 scalar Date
 
 type Query {
-  transactions(createdById: Int = 0, date: Date): [Transaction!]!
+  transactions(createdById: Int = 0, fromDate: Date, toDate: Date): [Transaction!]!
   categories(createdById: Int = 0): [Category!]!
   accounts(createdById: Int = 0): [Account!]!
   feeReport(date: Date): FindFeeReportRes!

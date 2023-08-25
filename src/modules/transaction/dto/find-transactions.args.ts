@@ -6,5 +6,8 @@ export class FindTransactionsArgs {
   createdById?: number;
 
   @Field(() => Date, { nullable: true })
-  date?: Date;
+  fromDate?: Date;
+
+  @Field(() => Date, { nullable: true })
+  toDate?: Date;
 }
